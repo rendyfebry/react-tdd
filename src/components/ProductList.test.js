@@ -6,8 +6,7 @@ Enzyme.configure({ adapter: new Adapter() });
 
 import ProductList from './ProductList'
 
-let mockProducts
-let wrapper
+let wrapper, mockProducts, mockProductSelect
 
 beforeEach(() => {
 	mockProducts = [
@@ -15,7 +14,8 @@ beforeEach(() => {
 		{ id: 2, name: 'Mock Product 2', brand: 'Brand 2' },
 		{ id: 3, name: 'Mock Product 3', brand: 'Brand 3' },
 	]
-	wrapper = shallow(<ProductList products={mockProducts} />)
+	mockProductSelect = jest.fn()
+	wrapper = shallow(<ProductList products={mockProducts} onProductSelect={mockProductSelect} />)
 })
 
 
@@ -38,4 +38,13 @@ test('ProductList shoud have product name', () => {
 test('ProductList shoud have product brand', () => {
 	const lastElement = wrapper.find('li').last()
 	expect(lastElement.contains(mockProducts[2].brand)).toEqual(true)
+})
+
+test('should call props.onProductSelect when user click product li', () => {
+	const firstElement = wrapper.find('li').first()
+	expect(mockProductSelect.mock.calls.length).toEqual(0)
+
+	firstElement.simulate('click')
+	expect(mockProductSelect.mock.calls.length).toEqual(1)
+	expect(mockProductSelect.mock.calls[0][0]).toEqual(mockProducts[0])
 })
